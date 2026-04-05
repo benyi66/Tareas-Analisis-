@@ -78,7 +78,8 @@ base_final <- rendicion_clean %>%
     BEA                         
   )
 
-
+#peos locos
+#no mas xd
 
 
 #Resumen de la base

@@ -80,7 +80,7 @@ base_final <- rendicion_clean %>%
 
 #peos locos
 #no mas xd
-
+#matiweco
 
 #Resumen de la base
 summary(base_final)

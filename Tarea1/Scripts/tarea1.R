@@ -8,10 +8,14 @@ library(stargazer)
 
 
 #Aquí definimos los dataframes que nos van a servir de la carpeta datos, puede que dsp agreguemos más.
-postulacion_oferta_academica <- read_excel("Datos/postulacion/ofertaAcademica/OfertaAcadémica_Admisión2025.xlsx")
-rendicion_archivo_c <- read_delim("Datos/rendicion/archivoC/ArchivoC_Adm2025.csv", delim = ";")
-matricula <- read_delim("Datos/matricula/ArchivoMatr_Adm2025.csv", delim = ";")
-inscripcion <- read_delim("Datos/inscripcion/archivoB/ArchivoB_Adm2025.csv", delim = ";")
+#Importante notar que se utiliza la coma como el separador de decimales.
+postulacion_oferta_academica <- read_excel("Tarea1/Datos/postulacion/ofertaAcademica/OfertaAcadémica_Admisión2025.xlsx")
+rendicion_archivo_c <- read_delim("Tarea1/Datos/rendicion/archivoC/ArchivoC_Adm2025.csv", delim = ";", 
+                                  locale = locale(decimal_mark = ","))
+matricula <- read_delim("Tarea1/Datos/matricula/ArchivoMatr_Adm2025.csv", delim = ";", 
+                        locale = locale(decimal_mark = ","))
+inscripcion <- read_delim("Tarea1/Datos/inscripcion/archivoB/ArchivoB_Adm2025.csv", delim = ";",
+                          locale = locale(decimal_mark = ","))
 
 
 #Aquí creamos un nuevo df con lo que pide la tarea, creando una nueva variable para agregarla que es M2_FINAL, la cual

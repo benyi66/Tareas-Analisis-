@@ -20,14 +20,14 @@ inscripcion <- read_delim("Tarea1/Datos/inscripcion/archivoB/ArchivoB_Adm2025.cs
 
 #Aquí creamos un nuevo df con lo que pide la tarea, creando una nueva variable para agregarla que es M2_FINAL, la cual
 #es una nueva columna que considera el puntaje máx de el alumno en M2 en los diversos períodos donde dio la prueba
-#Aparte de esa nueva columna, consideramos más variables que estaban en el df original y que nos van a servir para el lm
-#Y por último borramos los valores nulos en M2_FINAL
+#Aparte de esa nueva columna, consideramos más variables que estaban en el df original y que nos van a servir para el lm(modelo lineal)
+#Y por último borramos los valores nulos en M2_FINAL.
 rendicion_clean <- rendicion_archivo_c %>%
   mutate(M2_FINAL = pmax(MATE2_REG_ACTUAL, MATE2_INV_ACTUAL, 
                          MATE2_REG_ANTERIOR, MATE2_INV_ANTERIOR, na.rm = TRUE)) %>%
   filter(!is.na(M2_FINAL)) %>% 
   select(ID_aux, M2_FINAL, PTJE_NEM, PTJE_RANKING)
-
+# problema en caso todos NA, solucionar!!!!!
 
 #Nuevo df considerando solo los códigos de carreras tecnológicas o científicas.
 carreras_stem <- postulacion_oferta_academica %>%

@@ -27,14 +27,26 @@ rendicion_clean <- rendicion_archivo_c %>%
                          MATE2_REG_ANTERIOR, MATE2_INV_ANTERIOR, na.rm = TRUE)) %>%
   filter(!is.na(M2_FINAL)) %>% 
   select(ID_aux, M2_FINAL, PTJE_NEM, PTJE_RANKING)
-# problema en caso todos NA, solucionar!!!!!
+# *) problema en caso todos NA, solucionar!!!!!
+#----->POSIBLE SOLUCIÓN:
+# rendicion_clean <- rendicion_archivo_c %>%
+#   mutate(M2_FINAL = pmax(
+#     MATE2_REG_ACTUAL, MATE2_INV_ACTUAL, 
+#     MATE2_REG_ANTERIOR, MATE2_INV_ANTERIOR,
+#     na.rm = TRUE
+#   )) %>%
+#   mutate(M2_FINAL = na_if(M2_FINAL, -Inf)) %>%  
+#   filter(!is.na(M2_FINAL)) %>% 
+#   select(ID_aux, M2_FINAL, PTJE_NEM, PTJE_RANKING)
+
 
 #Nuevo df considerando solo los códigos de carreras tecnológicas o científicas.
 carreras_stem <- postulacion_oferta_academica %>%
   filter(CAR_CIENCIAS_TECNOLOGIA == "S") %>%
   select(CODIGO_CARRERA)
 
-#Hace match entre los alumnos de el df matricula y solo los que postularon a carreras STEM
+#Hace match entre los alumnos de el df matricula y solo los que postularon a carreras STEM-
+#Solo entrega el ID_aux de aquellos que cumplan el requisito.
 postulantes_stem <- matricula %>%
   inner_join(carreras_stem, by = c("CODIGO" = "CODIGO_CARRERA")) %>%
   distinct(ID_aux)

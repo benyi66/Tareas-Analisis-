@@ -8,21 +8,36 @@ library(stargazer)
 
 
 #Aquí definimos los dataframes que nos van a servir de la carpeta datos, puede que dsp agreguemos más.
-postulacion_oferta_academica <- read_excel("Datos/postulacion/ofertaAcademica/OfertaAcadémica_Admisión2025.xlsx")
-rendicion_archivo_c <- read_delim("Datos/rendicion/archivoC/ArchivoC_Adm2025.csv", delim = ";")
-matricula <- read_delim("Datos/matricula/ArchivoMatr_Adm2025.csv", delim = ";")
-inscripcion <- read_delim("Datos/inscripcion/archivoB/ArchivoB_Adm2025.csv", delim = ";")
+#Importante notar que se utiliza la coma como el separador de decimales.
+postulacion_oferta_academica <- read_excel("Tarea1/Datos/postulacion/ofertaAcademica/OfertaAcadémica_Admisión2025.xlsx")
+rendicion_archivo_c <- read_delim("Tarea1/Datos/rendicion/archivoC/ArchivoC_Adm2025.csv", delim = ";", 
+                                  locale = locale(decimal_mark = ","))
+matricula <- read_delim("Tarea1/Datos/matricula/ArchivoMatr_Adm2025.csv", delim = ";", 
+                        locale = locale(decimal_mark = ","))
+inscripcion <- read_delim("Tarea1/Datos/inscripcion/archivoB/ArchivoB_Adm2025.csv", delim = ";",
+                          locale = locale(decimal_mark = ","))
 
 
 #Aquí creamos un nuevo df con lo que pide la tarea, creando una nueva variable para agregarla que es M2_FINAL, la cual
 #es una nueva columna que considera el puntaje máx de el alumno en M2 en los diversos períodos donde dio la prueba
-#Aparte de esa nueva columna, consideramos más variables que estaban en el df original y que nos van a servir para el lm
-#Y por último borramos los valores nulos en M2_FINAL
+#Aparte de esa nueva columna, consideramos más variables que estaban en el df original y que nos van a servir para el lm(modelo lineal)
+#Y por último borramos los valores nulos en M2_FINAL.
 rendicion_clean <- rendicion_archivo_c %>%
   mutate(M2_FINAL = pmax(MATE2_REG_ACTUAL, MATE2_INV_ACTUAL, 
                          MATE2_REG_ANTERIOR, MATE2_INV_ANTERIOR, na.rm = TRUE)) %>%
   filter(!is.na(M2_FINAL)) %>% 
   select(ID_aux, M2_FINAL, PTJE_NEM, PTJE_RANKING)
+# *) problema en caso todos NA, solucionar!!!!!
+#----->POSIBLE SOLUCIÓN:
+# rendicion_clean <- rendicion_archivo_c %>%
+#   mutate(M2_FINAL = pmax(
+#     MATE2_REG_ACTUAL, MATE2_INV_ACTUAL, 
+#     MATE2_REG_ANTERIOR, MATE2_INV_ANTERIOR,
+#     na.rm = TRUE
+#   )) %>%
+#   mutate(M2_FINAL = na_if(M2_FINAL, -Inf)) %>%  
+#   filter(!is.na(M2_FINAL)) %>% 
+#   select(ID_aux, M2_FINAL, PTJE_NEM, PTJE_RANKING)
 
 
 #Nuevo df considerando solo los códigos de carreras tecnológicas o científicas.
@@ -30,7 +45,8 @@ carreras_stem <- postulacion_oferta_academica %>%
   filter(CAR_CIENCIAS_TECNOLOGIA == "S") %>%
   select(CODIGO_CARRERA)
 
-#Hace match entre los alumnos de el df matricula y solo los que postularon a carreras STEM
+#Hace match entre los alumnos de el df matricula y solo los que postularon a carreras STEM-
+#Solo entrega el ID_aux de aquellos que cumplan el requisito.
 postulantes_stem <- matricula %>%
   inner_join(carreras_stem, by = c("CODIGO" = "CODIGO_CARRERA")) %>%
   distinct(ID_aux)

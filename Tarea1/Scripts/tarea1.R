@@ -131,3 +131,13 @@ summary(base_final$PTJE_RANKING)
 boxplot(base_final$M2_FINAL, main="M2")
 boxplot(base_final$PTJE_NEM, main="NEM")
 boxplot(base_final$INGRESO_PERCAPITA_GRUPO_FA, main="Ingreso")
+
+
+#variable dependiente (M2) con su variable independiente principal (Ingreso)
+#los anteriores quedaban como muy simples y no decian mucho
+boxplot(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA, 
+        data = base_final,
+        main = "Distribución de Puntaje M2 por Tramo de Ingreso",
+        xlab = "Tramo de Ingreso Per Cápita",
+        ylab = "Puntaje M2",
+        col = "lightblue")

@@ -96,7 +96,38 @@ base_final <- rendicion_clean %>%
 
 #peos locos
 #no mas xd
-#matiweco
+
 
 #Resumen de la base
 summary(base_final)
+
+#p3
+# distribucion variable dependiente
+hist(base_final$M2_FINAL,
+     main = "Distribución Puntaje M2",
+     xlab = "Puntaje M2")
+
+# variables categoricas
+#sexo
+table(base_final$SEXO)
+prop.table(table(base_final$SEXO))
+
+#tipo de colegio
+table(base_final$GRUPO_DEPENDENCIA)
+prop.table(table(base_final$GRUPO_DEPENDENCIA))
+
+#region
+table(base_final$CODIGO_REGION)
+
+#variables numericas
+#ingreso
+summary(base_final$INGRESO_PERCAPITA_GRUPO_FA)
+
+#NEM y RANKING
+summary(base_final$PTJE_NEM)
+summary(base_final$PTJE_RANKING)
+
+# diagramas de caja boxplot
+boxplot(base_final$M2_FINAL, main="M2")
+boxplot(base_final$PTJE_NEM, main="NEM")
+boxplot(base_final$INGRESO_PERCAPITA_GRUPO_FA, main="Ingreso")

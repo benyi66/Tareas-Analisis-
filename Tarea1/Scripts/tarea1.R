@@ -5,16 +5,16 @@ library(dplyr)
 library(readr)   
 library(readxl)     
 library(stargazer)  
-
+library(ggplot2)
 
 #Aquí definimos los dataframes que nos van a servir de la carpeta datos, puede que dsp agreguemos más.
 #Importante notar que se utiliza la coma como el separador de decimales.
-postulacion_oferta_academica <- read_excel("Datos/postulacion/ofertaAcademica/OfertaAcadémica_Admisión2025.xlsx")
-rendicion_archivo_c <- read_delim("Datos/rendicion/archivoC/ArchivoC_Adm2025.csv", delim = ";", 
+postulacion_oferta_academica <- read_excel("Tarea1/Datos/postulacion/ofertaAcademica/OfertaAcadémica_Admisión2025.xlsx")
+rendicion_archivo_c <- read_delim("Tarea1/Datos/rendicion/archivoC/ArchivoC_Adm2025.csv", delim = ";", 
                                   locale = locale(decimal_mark = ","))
-matricula <- read_delim("Datos/matricula/ArchivoMatr_Adm2025.csv", delim = ";", 
+matricula <- read_delim("Tarea1/Datos/matricula/ArchivoMatr_Adm2025.csv", delim = ";", 
                         locale = locale(decimal_mark = ","))
-inscripcion <- read_delim("Datos/inscripcion/archivoB/ArchivoB_Adm2025.csv", delim = ";",
+inscripcion <- read_delim("Tarea1/Datos/inscripcion/archivoB/ArchivoB_Adm2025.csv", delim = ";",
                           locale = locale(decimal_mark = ","))
 
 
@@ -39,7 +39,24 @@ rendicion_clean <- rendicion_archivo_c %>%
 #   filter(!is.na(M2_FINAL)) %>% 
 #   select(ID_aux, M2_FINAL, PTJE_NEM, PTJE_RANKING)
 
-
+#Observamos los promedios y medianas con los datos de gente que no dio su ingreso percapita
+rendicionfiltrada <- rendicion_archivo_c %>%
+  mutate(
+    M2_FINAL = pmax(
+      MATE2_REG_ACTUAL, MATE2_INV_ACTUAL, 
+      MATE2_REG_ANTERIOR, MATE2_INV_ANTERIOR,
+      na.rm = TRUE
+    ),
+    M2_FINAL = na_if(M2_FINAL, -Inf)  # corrige caso todos NA
+  ) %>%
+  select(ID_aux, M2_FINAL, PTJE_NEM, PTJE_RANKING) %>%
+  filter(
+    !is.na(M2_FINAL),
+    M2_FINAL >= 100,
+    PTJE_NEM >= 100,
+    PTJE_RANKING >= 100
+  )
+summary(rendicionfiltrada)
 #Nuevo df considerando solo los códigos de carreras tecnológicas o científicas.
 carreras_stem <- postulacion_oferta_academica %>%
   filter(CAR_CIENCIAS_TECNOLOGIA == "S") %>%
@@ -59,10 +76,10 @@ base_final <- rendicion_clean %>%
   inner_join(inscripcion, by = "ID_aux") %>%
   
   mutate(
-  #Hace una limpieza en la var ingreso per capita, ya que esta va del 1 al 10 pero los que tienen 99 son los que no respondieron
+    #Hace una limpieza en la var ingreso per capita, ya que esta va del 1 al 10 pero los que tienen 99 son los que no respondieron
     INGRESO_PERCAPITA_GRUPO_FA = ifelse(INGRESO_PERCAPITA_GRUPO_FA == 99, NA, INGRESO_PERCAPITA_GRUPO_FA),
-  #En la base dice PACE en la casilla si entró con PACE, si no, aparece vacía, lo mismo con BEA
-  #Acá transformamos en 0 si no entró por beca, 1 si sí y así trabajamos con números y no palabras
+    #En la base dice PACE en la casilla si entró con PACE, si no, aparece vacía, lo mismo con BEA
+    #Acá transformamos en 0 si no entró por beca, 1 si sí y así trabajamos con números y no palabras
     PACE = ifelse(is.na(PACE), 0, 1),
     BEA  = ifelse(is.na(BEA), 0, 1)
   ) %>%
@@ -84,9 +101,9 @@ base_final <- rendicion_clean %>%
     PTJE_NEM,                   
     PTJE_RANKING,
     GRUPO_DEPENDENCIA,    #Vale 1 si es particular
-                          #Vale 2 si es particular subenciado
-                          #Vale 3 si es municipal
-                          #Vale 4 si es Servicio Local de Educación
+    #Vale 2 si es particular subenciado
+    #Vale 3 si es municipal
+    #Vale 4 si es Servicio Local de Educación
     
     SEXO,                       
     CODIGO_REGION,              
@@ -100,8 +117,6 @@ base_final <- rendicion_clean %>%
 
 #Resumen de la base
 summary(base_final)
-
-
 
 #p3
 # distribucion variable dependiente
@@ -143,3 +158,24 @@ boxplot(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA,
         xlab = "Tramo de Ingreso Per Cápita",
         ylab = "Puntaje M2",
         col = "lightblue")
+
+#p4
+#creamos gráfico con variable dependiente M2 y variable independiente ingreso per capita
+ggplot(base_final, aes(x = INGRESO_PERCAPITA_GRUPO_FA, y = M2_FINAL)) +
+  geom_jitter(alpha = 0.3) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Relación entre ingreso per cápita y puntaje M2",
+    x = "Tramo de ingreso per cápita",
+    y = "Puntaje M2"
+  )
+
+ggplot(base_final, aes(x = INGRESO_PERCAPITA_GRUPO_FA, y = M2_FINAL)) +
+  geom_jitter(alpha = 0.2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~ GRUPO_DEPENDENCIA) +
+  labs(
+    title = "Relación ingreso–puntaje M2 por tipo de establecimiento",
+    x = "Ingreso per cápita",
+    y = "Puntaje M2"
+  )

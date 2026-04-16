@@ -179,23 +179,25 @@ ggplot(base_final, aes(x = INGRESO_PERCAPITA_GRUPO_FA, y = M2_FINAL)) +
     x = "Ingreso per cápita",
     y = "Puntaje M2"
   )
+##P5
+
 #modelo 1, solo ingreso
 modelo_0 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA, data = base_final)
 summary(modelo_0)
 
-#modelo 1, solo ingreso
+#modelo 1, solo ingreso con grupo_dependencia
 modelo_1 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + factor(GRUPO_DEPENDENCIA), data = base_final)
 summary(modelo_1)
 
-#modelo 2, agregamos medidas academicas
+#modelo 2, agregamos medidas academicas(NEM)
 modelo_2 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM + factor(GRUPO_DEPENDENCIA), data = base_final)
 summary(modelo_2)
 
-#modelo 2, agregamos medidas academicas
+#modelo 2, agregamos medidas academicas(RANKING Y NO NEM)
 modelo_5 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_RANKING + factor(GRUPO_DEPENDENCIA), data = base_final)
 summary(modelo_5)
 
-#modelo 3, agregamos datos de la poblacion
+#modelo 3, agregamos datos de la poblacion(SEXO Y REGION)
 modelo_3 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM +
                  factor(SEXO) + factor(CODIGO_REGION) + factor(GRUPO_DEPENDENCIA),
                data = base_final)

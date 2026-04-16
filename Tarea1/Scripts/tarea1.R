@@ -179,3 +179,34 @@ ggplot(base_final, aes(x = INGRESO_PERCAPITA_GRUPO_FA, y = M2_FINAL)) +
     x = "Ingreso per cápita",
     y = "Puntaje M2"
   )
+#modelo 1, solo ingreso
+modelo_0 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA, data = base_final)
+summary(modelo_0)
+
+#modelo 1, solo ingreso
+modelo_1 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + factor(GRUPO_DEPENDENCIA), data = base_final)
+summary(modelo_1)
+
+#modelo 2, agregamos medidas academicas
+modelo_2 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM + factor(GRUPO_DEPENDENCIA), data = base_final)
+summary(modelo_2)
+
+#modelo 2, agregamos medidas academicas
+modelo_5 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_RANKING + factor(GRUPO_DEPENDENCIA), data = base_final)
+summary(modelo_5)
+
+#modelo 3, agregamos datos de la poblacion
+modelo_3 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM +
+                 factor(SEXO) + factor(CODIGO_REGION) + factor(GRUPO_DEPENDENCIA),
+               data = base_final)
+summary(modelo_3)
+
+#modelo 4, el final considerando toas las variables
+modelo_4 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM +
+                 factor(SEXO) + factor(GRUPO_DEPENDENCIA) + factor(CODIGO_REGION) +
+                 PACE,
+               data = base_final)
+summary(modelo_4)
+stargazer(modelo_0, modelo_1, modelo_2, modelo_5, modelo_3, modelo_4,
+          type = "text",
+          df = FALSE)

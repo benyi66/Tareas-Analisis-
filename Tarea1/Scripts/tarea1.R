@@ -6,6 +6,7 @@ library(readr)
 library(readxl)     
 library(stargazer)  
 library(ggplot2)
+library(webshot2)
 
 #Aquí definimos los dataframes que nos van a servir de la carpeta datos, puede que dsp agreguemos más.
 #Importante notar que se utiliza la coma como el separador de decimales.
@@ -208,5 +209,18 @@ modelo_4 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM +
                data = base_final)
 summary(modelo_4)
 stargazer(modelo_0, modelo_1, modelo_2, modelo_5, modelo_3, modelo_4,
-          type = "text",
-          df = FALSE)
+          dep.var.labels = "",
+          omit.stat = c("f", "adj.rsq"),
+          type="html", out="mtcars.html")
+
+webshot(url = "mtcars.html")
+
+#modelo 2, agregamos medidas academicas
+modelo_6 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM + factor(GRUPO_DEPENDENCIA) + PTJE_NEM*factor(GRUPO_DEPENDENCIA), data = base_final)
+summary(modelo_6)
+stargazer(modelo_6,
+          dep.var.labels = "",
+          omit.stat = c("f", "adj.rsq"),
+          type="html", out="mtcars2.html")
+# Con esto sacan la foto de la regresión
+webshot(url = "mtcars2.html")

@@ -217,6 +217,18 @@ stargazer(modelo_0, modelo_1, modelo_2, modelo_5, modelo_3, modelo_4,
 
 webshot(url = "mtcars.html")
 
+#prueba de multicolinealidad
+#install.packages("car")
+library(car)
+vif(modelo_4)
+
+#prueba de homocedasticidad
+#prueba visual: graficar residuos vs valores ajustados
+#si se forma una nube aleatoria y unifirme tenems homocedasticidad
+plot(modelo_4, which = 1)
+
+
+
 #p6
 modelo_6 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM + factor(GRUPO_DEPENDENCIA) + PTJE_NEM*factor(GRUPO_DEPENDENCIA), data = base_final)
 summary(modelo_6)
@@ -226,3 +238,15 @@ stargazer(modelo_6,
           type="html", out="mtcars2.html")
 # Con esto sacan la foto de la regresión
 webshot(url = "mtcars2.html")
+
+
+#P9 repetir p5 pero con chatgpt
+#solo puse el modelo mas completo, los demas era repetir mas de lo mismo
+modelo_chat <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM + PTJE_RANKING +
+                 factor(SEXO) + factor(GRUPO_DEPENDENCIA) + factor(CODIGO_REGION) +
+                 PACE + BEA,
+               data = base_final)
+#summary(modelo_chat)
+stargazer(modelo_chat,
+          type = "text",
+          df = FALSE)

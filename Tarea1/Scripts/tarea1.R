@@ -227,7 +227,25 @@ vif(modelo_4)
 #si se forma una nube aleatoria y unifirme tenems homocedasticidad
 plot(modelo_4, which = 1)
 
+#Prueba de Homocedasticidad (Test de Breusch-Pagan)
+#install.packages("lmtest")
+#install.packages("sandwich")
 
+library(lmtest)
+bptest(modelo_4)
+# Si el p-valor es menor a 0.05, hay HETEROCEDASTICIDAD (la varianza de los errores no es constante).
+
+library(sandwich)
+library(lmtest)
+
+# Calcular los coeficientes con errores estándar robustos para el modelo 4
+modelo_4_robusto <- coeftest(modelo_4, vcov = vcovHC(modelo_4, type = "HC1"))
+
+# Para mostrarlo en stargazer al lado del original:
+stargazer(modelo_4, modelo_4, 
+          se = list(NULL, sqrt(diag(vcovHC(modelo_4, type = "HC1")))),
+          type = "text",
+          column.labels = c("Normal", "Robustos"))
 
 #p6
 modelo_6 <- lm(M2_FINAL ~ INGRESO_PERCAPITA_GRUPO_FA + PTJE_NEM + factor(GRUPO_DEPENDENCIA) + PTJE_NEM*factor(GRUPO_DEPENDENCIA), data = base_final)
